@@ -1,7 +1,7 @@
 /* In order for the following instructions to work, we need variable products in WooCommerce that have a date on at least one property. In our example, we use a property called “Date” (slug: date). Here, dates are stored in the date format YYYY-mm-dd. */
 
 // Sort dates and hide past dates in the select box on product single pages
-function hide_past_dates( $html, $args ) {
+function commotion_hide_past_dates( $html, $args ) {
 	$options               = $args['options'];
 	$product               = $args['product'];
 	$attribute             = $args['attribute'];
@@ -46,4 +46,4 @@ function hide_past_dates( $html, $args ) {
 
 	return $html;
 }
-add_filter( 'woocommerce_dropdown_variation_attribute_options_html', 'hide_past_dates', 10, 2 );
+add_filter( 'woocommerce_dropdown_variation_attribute_options_html', 'commotion_hide_past_dates', 10, 2 );
