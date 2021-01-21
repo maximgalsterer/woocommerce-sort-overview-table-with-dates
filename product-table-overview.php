@@ -1,7 +1,18 @@
 /* In order for the following instructions to work, we need variable products in WooCommerce that have a date on at least one property. In our example, we use a property called “Date” (slug: date). Here, dates are stored in the date format YYYY-mm-dd. */
 
+// Add tab
+function commotion_additional_tabs( $tabs ) {
+  $tabs['date_overview'] = array(
+    'title' 	=> __( 'Dates in the overview', 'woocommerce' ),
+    'priority' 	=> 10,
+    'callback' 	=> 'commotion_product_table_overview'
+  );
+	return $tabs;
+}
+add_filter( 'woocommerce_product_tabs', 'commotion_additional_tabs' );
+
 // Product table overview 
-function product_table_overview() {
+function commotion_product_table_overview() {
   global $wp_query;
   $cat = $wp_query->get_queried_object();
 
@@ -25,7 +36,7 @@ function product_table_overview() {
         $variation    = new WC_Product_Variation( $variation_id );
         $attributes   = $variation->get_variation_attributes();
         $date         = $attributes['attribute_pa_date'];
-        $date_name    = get_term_by( 'slug', $datum, 'pa_date' );
+        $date_name    = get_term_by( 'slug', $date, 'pa_date' );
 
         if ( !empty( $date ) ) {
           $rows[] = array( $product_id, $product->post_title, $variation_id, $date, $date_name->name );
@@ -46,7 +57,7 @@ function product_table_overview() {
     foreach ( $rows as $row ) :
       if ( date( 'Y-m-d', strtotime( $row[4] ) ) > date( 'Y-m-d' ) ) :
         ?>
-        <tr><td><img src="<?= get_the_post_thumbnail_url( $row[0], 'woocommerce_thumbnail' ) ?>" alt="<?= $row[1] ?>"></td><td><a href="<?= get_permalink( $row[0] ) ?>'?attribute_pa_datum=<?= $row[3] ?>"><?= $row[4] ?></a></td><td><a href="<?= get_permalink( $row[0] ) ?>?attribute_pa_datum=<?= $row[3] ?>"><strong><?= $row[1] ?></strong></a></td><td><a href="/?add-to-cart=<?= $row[0] ?>&variation_id=<?= $row[2] ?>&attribute_pa_datum=<?= $row[4] ?>"><i class="fas fa-shopping-bag"></i> <?php _e( 'Add to cart', 'woocommerce' ); ?></a></td></tr>
+        <tr><td><img src="<?= get_the_post_thumbnail_url( $row[0], 'woocommerce_thumbnail' ) ?>" alt="<?= $row[1] ?>"></td><td><a href="<?= get_permalink( $row[0] ) ?>'?attribute_pa_date=<?= $row[3] ?>"><?= $row[4] ?></a></td><td><a href="<?= get_permalink( $row[0] ) ?>?attribute_pa_date=<?= $row[3] ?>"><strong><?= $row[1] ?></strong></a></td><td><a href="/?add-to-cart=<?= $row[0] ?>&variation_id=<?= $row[2] ?>&attribute_pa_date=<?= $row[4] ?>"><i class="fas fa-shopping-bag"></i> <?php _e( 'Add to cart', 'woocommerce' ); ?></a></td></tr>
         <?php
       endif;
     endforeach;
@@ -54,5 +65,5 @@ function product_table_overview() {
   </tbody></table>
 <?php
 }
-// add_action( 'woocommerce_before_shop_loop', 'product_table_overview' ); // Activate to show overview before the shop loop
-add_action( 'woocommerce_after_shop_loop', 'product_table_overview' ); // Overview after the shop loop
+// add_action( 'woocommerce_before_shop_loop', 'commotion_product_table_overview' ); // Activate to show overview before the shop loop
+add_action( 'woocommerce_after_shop_loop', 'commotion_product_table_overview' ); // Overview after the shop loop
